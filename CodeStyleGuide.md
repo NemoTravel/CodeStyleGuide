@@ -162,6 +162,20 @@ $hasChildren = FALSE;
 
 #### Именование переменных, функций и классов ####
 
+Язык названий переменных/классов/функций и т. д. - **строго** английский.
+
+*ПЛОХО:*
+```javascript
+var PeriodoEntrePulsaciones = 300;
+var taimautNaAyaksZapros = 300;
+```
+*ХОРОШО:*
+```javascript
+var requestTimeout = 300;
+```
+
+====
+
 Любое имя **должно** быть лаконичным, но понятным: имя должно описывать назначение переменной/функции/класса, чем короче это описание, тем лучше
 
 *ПЛОХО:*
@@ -210,6 +224,21 @@ var XML_text = '';
 function doSomethingAwesome () { /* snip */ }
 
 var XMLText = '';
+```
+
+====
+
+Имена геттеров и сеттеров **обязаны** начинаться с ````get```` и ````set```` соответственно
+
+*ПЛОХО:*
+```php
+public function id()           { return $this->id; }
+public function retrieveName() { return $this->name; }
+```
+*ХОРОШО:*
+```php
+public function getId()   { return $this->id; }
+public function getName() { return $this->name; }
 ```
 
 ====
@@ -594,6 +623,37 @@ if ($items.length > maxItems) {
 }
 ```
 
+====
+
+Строки настоятельно **рекомендуется** записывать в одинарных кавычках.
+
+====
+
+**Обязательно** использование конкатенации для записи длинных строк
+
+*ПЛОХО:*
+```javascript
+var error = 'This is a soopah long error \
+		that my soopah cool script trows on every occasion \
+		because I\'m a soopah cool web developer and \
+		I know how to do cool stuff';
+```
+*ХОРОШО:*
+```javascript
+var error = 'This is a soopah long error '+
+		'that my soopah cool script trows on every occasion '+
+		'because I\'m a soopah cool web developer and '+
+		'I know how to do cool stuff';
+```
+
+====
+
+Не полагайтесь на приведение типов: **не рекомендуется** пользоваться конструкциями вида
+```php
+if ($possiblyEmptyArray) { /* snip */ }
+```
+если переменная не заведомо [скалярна](http://php.net/manual/en/language.types.intro.php) для PHP или [примитивна](http://javascriptweblog.wordpress.com/2010/09/27/the-secret-life-of-javascript-primitives/) для JavaScript.
+
 ----
 
 ### Общие положения по комментированию кода ###
@@ -828,6 +888,10 @@ function checkValue ($value) {
 
 ====
 
+Строжайше **запрещено** подавление ошибок через ````@````
+
+====
+
 Расширение php-файла **строго** ````.php```.
 
 ====
@@ -886,12 +950,26 @@ catch (VillainException $e) {
 ```php
 	public static function logIn ($login, $password) {
 		if (self::checkLoginAndPassword($login,$password)) {
-			
+			return null;
 		}
 		
 		return new self();
 	}
 ```
+*ХОРОШО:*
+```php
+	public static function logIn ($login, $password) {
+		if (self::checkLoginAndPassword($login,$password)) {
+			throw new UserNotFoundException ();
+		}
+		
+		return new self();
+	}
+```
+
+====
+
+Все классы-наследники класса ````Exception```` **должны** иметь имя, заканчивающееся на слово ````Exception````
 
 ====
 
@@ -932,16 +1010,6 @@ foreach ($objectsArray as $object) {
 
 ----
 
-#### Приведение типов ####
-
-Не полагайтесь на приведение типов: **не рекомендуется** пользоваться конструкциями вида
-```php
-if ($possiblyEmptyArray) { /* snip */ }
-```
-если переменная не заведомо булева.
-
-----
-
 #### Строки ####
 
 Использование переменных внутри строки **запрещено**.
@@ -958,10 +1026,6 @@ return "C'mon {$user['name']} let's go party!";
 ```php
 return 'C\'mon '.$name.' let's go party!';
 ```
-
-====
-
-Строки **рекомендуется** писать в одинарных кавычках.
 
 ====
 
@@ -986,7 +1050,25 @@ echo '42'.EOL;
 
 ====
 
-Использование статических переменных в функциях **запрещено**
+Использование [магических методов](http://php.net/manual/ru/language.oop5.magic.php) **не рекомендуется**
+
+====
+
+Если свойство или метод могут быть статическими, они **должны** быть статическими
+
+====
+
+Каждый класс **должен** быть разделен на такие "логические блоки":
+
+- Блок констант класса
+- Блок свойств класса
+- Блок публичных методов
+- Блок защищенных методов
+- Блок Блок приватных методов
+
+====
+
+Использование [статических переменных](http://www.php.net/manual/en/language.variables.scope.php#example-104) в функциях **запрещено**
 
 ====
 
@@ -1014,11 +1096,303 @@ echo '42'.EOL;
 		/* snip */
 	}
 ```
-
-====
-
-Использование [магических методов](http://php.net/manual/ru/language.oop5.magic.php) **не рекомендуется**
+**Подробнее:** [Type Hinting](http://www.php.net/manual/en/language.oop5.typehinting.php)
 
 ----
 
 ### JavaScript ###
+
+Настоятельно **рекомендуется** использование [strict mode](http://habrahabr.ru/post/118666/)
+
+====
+
+**Обязательно** использование точки с запятой в конце каждой команды
+
+*ПЛОХО:*
+```javascript
+i = 'work'
+```
+*ХОРОШО:*
+
+```javascript
+i = 'work but I\'m also correct';
+```
+====
+
+Использование точки с запятой после закрывающей скобки блока **запрещено**
+
+*ПЛОХО:*
+```javascript
+if (itemsStack.length) {
+	/* snip */
+};
+```
+*ХОРОШО:*
+
+```javascript
+if (itemsStack.length) {
+	/* snip */
+}
+```
+
+====
+
+Объявление переменных **обязано** быть в начале области видимости. Если объявляется несколько переменных, то вторая и все последующие **должны** размещаться на отдельной строке, со сдвигом *на 4 пробела*, причем первыми **рекомендуется** указывать инициализированные переменные, а последними - неинициализированные.
+
+*ПЛОХО:*
+```javascript
+var result, $element = $('.js-something');
+
+/* snip */
+
+var $parent = $element.parent('.js-container');
+```
+*ХОРОШО:*
+```javascript
+var $element = $('.js-something'),
+    $parent = $element.parent('.js-container'),
+    result;
+```
+
+====
+
+Переменные, содержащие в себе jQuery-коллекцию **должны** начинаться с символа ````$````
+
+----
+
+#### Объекты и массивы ####
+
+Настоятельно **не рекомендуется** использовать ````new Array()```` и ````new Object()````, используйте сокращенную запись: ````[]```` и ````{}```` соотсетственно
+
+*ПЛОХО:*
+```javascript
+var myArray = new Array(),
+	myObject = new Object();
+```
+*ХОРОШО:*
+```javascript
+var myArray = [],
+	myObject = {};
+```
+
+====
+
+**Запрещено** оставлять запятую после последнего свойства объекта или элемента массива
+
+*ПЛОХО:*
+```javascript
+var myArray = [1, 2, 3, 4,],
+	myObject = {
+		/* snip */
+		lastProperty: 'abracadabra',
+	};
+```
+*ХОРОШО:*
+
+```javascript
+var myArray = [1, 2, 3, 4],
+	myObject = {
+		/* snip */
+		lastProperty: 'abracadabra'
+	};
+```
+**Обоснование:** в объекте это может "уронить" InternetExplorer, в массиве - добавить нежелательный ````null```` еще одним элементом массива, причем последнее зависит от того, какой интерпретатор используется
+
+====
+
+Настоятельно **не рекомендуется** создавать свойства объекта, для записи которых приходится использовать кавычки. Исключением может быть случай, когда эти свойства *всегда* создаются и используются программно.
+
+**Запрещено** оборачивать в кавычки свойства объектов, когда это не требуется. 
+
+*ПЛОХО:*
+```javascript
+var fictionalChar = {
+	'full-name': 'Donkey-Hot',
+	'age': undefined
+}
+```
+*ХОРОШО:*
+```javascript
+var fictionalChar = {
+	fullName : 'Donkey-Hot',
+	age      : undefined
+}
+```
+
+====
+
+**Запрещено** использовать квадратные скобки и строки для доступа к свойству объекта
+
+*ПЛОХО:*
+```javascript
+this.options['someConfigurableHook'].call(this);
+```
+*ХОРОШО:*
+```javascript
+this.options.someConfigurableHook.call(this);
+```
+
+====
+
+**Запрещено** использовать "коверканые" зарезервированные слова как названия свойств объекта, используйте читаемые синонимы
+
+*ПЛОХО:*
+```javascript
+var something = {
+	if: 'parameterName',
+	klass: 'prefix-ds__bem_class'
+};
+```
+*ХОРОШО:*
+```javascript
+var something = {
+	condition: 'parameterName',
+	addClass: 'prefix-ds__bem_class'
+};
+```
+
+====
+
+Для добавления или изменения элементов в массиве **необходимо** использовать методы ````push()````, ````pop()````, ````shift()````, ````unshift()```` и т. д.
+
+*ПЛОХО:*
+```javascript
+someStack[someStack.length] = 'abracadabra';
+```
+*ХОРОШО:*
+```javascript
+someStack.push('new string');
+```
+
+====
+
+При  итерации по свойствам объекта **обязательно** использование ````.hasOwnProperty()````
+
+*ПЛОХО:*
+```javascript
+var tmp = {
+	a: 1,
+	b: 2,
+	c: 3
+};
+
+for (var i in tmp) {
+	console.log(i, tmp[i]);
+}
+```
+*ХОРОШО:*
+```javascript
+var tmp = {
+	a: 1,
+	b: 2,
+	c: 3
+};
+
+for (var i in tmp) {
+	if (tmp.hasOwnProperty(i)) {
+		console.log(i, tmp[i]);
+	}
+}
+```
+
+#### Функции ####
+
+**Запрещено** объявлять переменную с именем ````arguments````.
+
+**Обоснование:** читаем про [предопределенную локальную переменную](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/arguments)
+
+====
+
+Определять функции внутри логических блоков либо циклов **запрещено**.
+
+#### Прочее ####
+
+Имена "приватных" свойств **рекомендуется** начинать с ````_````
+
+====
+
+**Необходимо** всегда передавать второй параметр в функцию ````parseInt````
+
+====
+
+При создании прототипа объекта, **необходимо** *добавлять* методы в прототип, а не переписывать его
+
+*ПЛОХО:*
+```javascript
+function SuperHero() {
+  this.name;
+}
+
+SuperHero.prototype = {
+	setName: function setName (name) {
+		this.name = name;
+	},
+	
+	getName: function getName () {
+		return this.name;
+	}
+};
+```
+*ХОРОШО:*
+```javascript
+function SuperHero() {
+  this.name;
+}
+
+SuperHero.prototype.setName = function setName (name) {
+	this.name = name;
+}
+	
+SuperHero.prototype.getName = function getName () {
+	return this.name;
+}
+```
+**Обоснование:** переписав прототип уничтожатся уже существующие в нем методы, делая наследование невозможным
+
+#### События ####
+
+Если возникает нужда передать данные через событие (большинство фреймворков позволяют передавать произвольные данные вместе с событиями), настоятельно **рекомендуется** использовать один объект, даже если передаваемых объектов несколько
+
+*ПЛОХО:*
+```javascript
+$element.trigger('customEvent', some, data);
+```
+*ХОРОШО:*
+```javascript
+$element.trigger(
+	'customEvent',
+	{
+		key  : some,
+		data : data
+	}
+);
+```
+
+**Обоснование:** если потребуется передавать еще один объект, нужно будет просто добавить его обработку в требуемые обработчики, вместо того, чтобы добавлять еще один аргумент во все возможные 25
+
+====
+
+**Рекомендуется** использовать события и их обработчики, вместо вызова функций. При этом обработчикам событий **рекомендуется** получать все необходимые для себя данные через данные в самом событии.
+
+*ПЛОХО:*
+```javascript
+function doSomething () {
+	/* snip */
+	doSomethingAdditional(some, parameters, here);
+}
+```
+*ХОРОШО:*
+```javascript
+function doSomething () {
+	/* snip */
+	$element.trigger(
+		'doneSomething',
+		{
+			some      : parameters,
+			passed    : to,
+			triggered : event
+		}
+	);
+}
+```
+**Обоснование:** если потребуется "точечно" добавить функциональность, например - на одной странице из многих, намного проще и удобнее провесить еще один обработчик событий, чем переопределять "специально оставленную" функцию
