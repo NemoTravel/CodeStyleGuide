@@ -117,6 +117,22 @@ private $text        = 'abracadabra';
 private $other_texts = 'arbadacarba';
 ```
 
+====
+
+При [чейнинге методов](http://en.wikipedia.org/wiki/Method_chaining) **рекомендуется** сносить методы на следующую строку с индентацией на один уровень. Рекомендация становится **необходимостью**, если методов больше двух. При этом **разрешается** оставлять фильтрующую функцию на первой строке, если она одна.
+
+*ПЛОХО:*
+```javascript
+$container.find('.js-something').show().removeClass('.js-disabled').data('someDataKey',someDataHere);
+```
+*ХОРОШО:*
+```javascript
+$container.find('.js-something')
+	.show()
+	.removeClass('.js-disabled')
+	.data('someDataKey', someDataHere);
+```
+
 ----
 
 #### Константы и булевы переменные ####
@@ -1158,6 +1174,47 @@ var $element = $('.js-something'),
 
 Переменные, содержащие в себе jQuery-коллекцию **должны** начинаться с символа ````$````
 
+====
+
+**Не рекомендуется** использовать метод ````end()```` библиотеки jQuery.
+
+*ПЛОХО:*
+```javascript
+$container
+	.find('.js-somethingToHide')
+		.hide()
+		.addClass('.js-disabled')
+	.end()
+	.find('.js-somethingToShow')
+		.show()
+		.removeClass('.js-disabled');
+```
+*ХОРОШО:*
+```javascript
+$container.find('.js-somethingToHide')
+	.hide()
+	.addClass('.js-disabled')
+	
+$container.find('.js-somethingToShow')
+	.show()
+	.removeClass('.js-disabled');
+```
+
+====
+
+**Запрещено** использовать выборки по чему-либо кроме классов с префиксом ````js-```` и их суперпозиций
+
+*ПЛОХО:*
+```javascript
+$container.find('a').addClass('i-invisible');
+$container.find('.csg-someClass').addClass('i-invisible');
+$container.find('#someId').addClass('i-invisible');
+```
+*ХОРОШО:*
+```javascript
+$container.find('.js-someClass').addClass('i-invisible');
+```
+
 ----
 
 #### Объекты и массивы ####
@@ -1295,6 +1352,8 @@ for (var i in tmp) {
 }
 ```
 
+----
+
 #### Функции ####
 
 **Запрещено** объявлять переменную с именем ````arguments````.
@@ -1305,49 +1364,7 @@ for (var i in tmp) {
 
 Определять функции внутри логических блоков либо циклов **запрещено**.
 
-#### Прочее ####
-
-Имена "приватных" свойств **рекомендуется** начинать с ````_````
-
-====
-
-**Необходимо** всегда передавать второй параметр в функцию ````parseInt````
-
-====
-
-При создании прототипа объекта, **необходимо** *добавлять* методы в прототип, а не переписывать его
-
-*ПЛОХО:*
-```javascript
-function SuperHero() {
-  this.name;
-}
-
-SuperHero.prototype = {
-	setName: function setName (name) {
-		this.name = name;
-	},
-	
-	getName: function getName () {
-		return this.name;
-	}
-};
-```
-*ХОРОШО:*
-```javascript
-function SuperHero() {
-  this.name;
-}
-
-SuperHero.prototype.setName = function setName (name) {
-	this.name = name;
-}
-	
-SuperHero.prototype.getName = function getName () {
-	return this.name;
-}
-```
-**Обоснование:** переписав прототип уничтожатся уже существующие в нем методы, делая наследование невозможным
+----
 
 #### События ####
 
@@ -1396,3 +1413,267 @@ function doSomething () {
 }
 ```
 **Обоснование:** если потребуется "точечно" добавить функциональность, например - на одной странице из многих, намного проще и удобнее провесить еще один обработчик событий, чем переопределять "специально оставленную" функцию
+
+----
+
+#### Прочее ####
+
+Имена "приватных" свойств **рекомендуется** начинать с ````_````
+
+====
+
+**Необходимо** всегда передавать второй параметр в функцию ````parseInt````
+
+====
+
+При создании прототипа объекта, **необходимо** *добавлять* методы в прототип, а не переписывать его
+
+*ПЛОХО:*
+```javascript
+function SuperHero() {
+  this.name;
+}
+
+SuperHero.prototype = {
+	setName: function setName (name) {
+		this.name = name;
+	},
+	
+	getName: function getName () {
+		return this.name;
+	}
+};
+```
+*ХОРОШО:*
+```javascript
+function SuperHero() {
+  this.name;
+}
+
+SuperHero.prototype.setName = function setName (name) {
+	this.name = name;
+}
+	
+SuperHero.prototype.getName = function getName () {
+	return this.name;
+}
+```
+**Обоснование:** переписав прототип уничтожатся уже существующие в нем методы, делая наследование невозможным
+
+----
+
+### HTML ###
+
+**Обязательно** корректное использование doctype во всех местах, где его можно применить. При этом используется ````<!DOCTYPE html>````
+
+**Обоснование:** см. [презентацию Вадима Макеева](http://pepelsbey.net/pres/doctype/)
+
+====
+
+Тег ````<html>```` **обязан** иметь аттрибут ````lang````, если это возможно
+
+====
+
+Тег ````<head>```` **обязан** содержать необходимые метатеги, определяющие:
+
+- Тип передаваемых данных (обычно - ````text/html; charset=UTF-8````)
+- Кодировку страницы
+- Заголовок страницы
+
+====
+
+Тег ````<head>```` **обязан** содержать подключение общих javascript-библиотек (например, jQuery) и css. **Запрещено** подключение общих библиотек и стилей в теле страницы
+
+====
+
+**Не рекомендуется** указывать аттрибут ````type```` для тегов ````link```` и ````script````, если значение равно значению по умолчанию (````type="text/css"```` и ````type="text/javascript"```` соответственно)
+
+**Обоснование:** [Спецификация HTML 5](http://www.w3.org/html/wg/drafts/html/master/document-metadata.html) не требует указания типа данных, используя вышеуказанные значения как значения по умолчанию.
+
+====
+
+**Запрещено** использование тегов ````<style>```` и ````<script>```` для внедрения стилей или скриптов на страницу не через подключение соответствующего файла
+
+*ПЛОХО:*
+```html
+<style>
+	.csg-testClass {
+		color: red;
+	}
+<style>
+<script>
+	var someVar = 'Some text';
+</script>
+```
+*ХОРОШО:*
+```html
+<link rel="stylesheet" href="css_additional.css"/>
+<script src="js_additional.js"/>
+```
+
+====
+
+**Обязательно** закрывать HTML-теги, даже если это не требуется
+
+*ПЛОХО:*
+```html
+<li>Some text here.
+<li>Some new text here.
+<li>You get the idea.
+```
+*ХОРОШО:*
+```html
+<li>Some text here. </li>
+<li>Some new text here. </li>
+<li>You get the idea. </li>
+```
+
+====
+
+Названия тегов **должны** быть в нижнем регистре
+
+*ПЛОХО:*
+```html
+<DIV class="prefix-subprefix-some__class">I'm a text!</DIV>
+```
+*ХОРОШО:*
+```html
+<div class="prefix-subprefix-some__class">I'm a text!</div>
+```
+
+====
+
+Настоятельно **рекомендуется** использовать [семантические HTML-элементы](http://blogs.msdn.com/b/jennifer/archive/2011/08/01/html5-part-1-semantic-markup-and-page-layout.aspx). [W3CSchools](http://www.w3schools.com/html/html5_semantic_elements.asp)
+
+====
+
+**Запрещено** использовать inline-css и inline-javascript. Используйте классы.
+
+*ПЛОХО:*
+```html
+<div style="color: red;" onclick="doSomething();">
+```
+*ХОРОШО:*
+```html
+<div class="prefix-some__class js-some__js__class">
+```
+
+----
+
+#### Классы ####
+
+Классы **обязаны** подчиняться следующим правилам именования a-la [BEM](http://ru.bem.info/):
+```
+themePrefix-[componentPrefix-]blockName[__blockName[__blockName[...]]][_modifier]
+```
+Где
+
+- ````themePrefix-```` - префикс, говорящий о том, для какой темы оформления используется данный класс, либо имеющий одно из *специальных значений*: ````i-```` (общие и/или служебные стили) или ````js-```` невизуальный класс, существующий *исключительно* для обработки с помощью JavaScript. В данном руководстве используется префикс ````csg-````, относящийся к теме CodeStyleGuide
+- ````componentPrefix-```` - префикс, определяющий, к какому компоненту относится данный класс
+- ````blockName```` - название смыслового блока верстки
+- ````_modifier```` - модификатор, обозначающий определенное *состояние* блока (````_selected````, ````_active````, ````_disabled```` и т. д.)
+
+*ПРИМЕР:*
+````
+csg-news-newsList // Список новостей компонента news темы оформления air
+csg-news-newsList__article // Новость в списке новостей компонента news темы оформления air
+csg-news-newsList__article__header // Заголовок новости в списке новостей компонента news темы оформления air
+csg-news-newsList__article__header_hot // Заголовок горячей новости в списке новостей компонента news темы оформления air
+````
+
+====
+
+**Запрещено** использовать символы ````-```` и ````_```` в названиях смысловых блоков. Они заререзвированы как разделители
+
+====
+
+Названия смысловых блоков **должны** быть в camelCase.
+
+*ПЛОХО:*
+````
+csg-news-newslist
+
+csg-flights-flight__shortinfo__departureDate
+```` 
+*ХОРОШО:*
+````
+csg-news-newsList
+
+csg-flights-flight__shortInfo__departureDate
+````
+
+----
+
+### CSS + Stylus ###
+
+**Обязательно** использование двоеточий после названия свойства
+
+====
+
+**Обязательно** использование точки с запятой после значения свойства
+
+====
+
+**Обязательно** использование фигурных скобок для выделения блока
+
+====
+
+Каждое свойство **должно** размещаться на отдельной строке 
+
+====
+
+Индентация **обязательна**
+
+====
+
+**Запрещено** вешать стили на что-либо кроме классов
+
+====
+
+**Запрещено** вешать стили на классы с префиксом ````js-````
+
+====
+
+**Не рекомендуется** использование ````float```` там, где можно обойтись ````display: inline-block;```` либо ````display: table-cell;````
+
+----
+
+#### Структура файлов ####
+
+Все цвета, размеры и т. п. **должны** быть вынесены в отдельный файл ````_vars.styl````.
+
+====
+
+Стили, относящиеся к модулям и их крупным частям **должны** быть разнесены по файлам с человекопонятными названиями
+
+*ПРИМЕР:*
+````
+news_newslist.styl
+news_article.styl
+````
+
+====
+
+Все подключаемые файлы **должны** лежать в папке ````css/blocks````
+
+====
+
+Основной .styl-файл, который будет компилироваться **должен** иметь имя ````style.styl````, содержать исключительно подключения других .styl-файлов с комментариями и располагаться в папке ````css/````
+
+====
+
+**Запрещено** подключать файлы куда-либо кроме ````style.styl````
+
+====
+
+**Запрещено** подключать файлы с расширением ````.css```` 
+
+----
+
+#### Прочее ####
+
+Компиляцию stylus-а **необходимо** проводить с указанием ключей ````-c```` и ````--include-css````
+
+----
+
+### Smarty ###
